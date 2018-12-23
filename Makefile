@@ -1,8 +1,9 @@
 CC=gcc
 CFLAGS= -Werror -Wall
+RELEASE= -s -Os
 LFLAGS=
 DBG= -g3 -fsanitize=address
-ASAN_LIBS = -lasan -static-libasan
+ASAN_LIBS = -lasan
 DIR := ${CURDIR}
 INCLUDE= $(DIR)/include
 BIN = $(DIR)/binaries
@@ -13,13 +14,13 @@ SRC = $(DIR)/src
 all: clean eray-release eray-debug
 
 eray-release: eray.o
-	$(CC) $(SRC)/$^ $(LFLAGS) -o $(BIN)/$@ $(CFLAGS)
+	$(CC) $(SRC)/$^ $(LFLAGS) -o $(BIN)/$@ $(CFLAGS) $(RELEASE)
 
 eray-debug: eray-debug.o
 	$(CC) $(SRC)/$^ $(LFLAGS) $(ASAN_LIBS) -o $(BIN)/$@ $(CFLAGS)
 
 %.o: $(SRC)/%.c
-	$(CC) -c $(CFLAGS) $< -o $(SRC)/$@
+	$(CC) -c $(CFLAGS) $(RELEASE) $< -o $(SRC)/$@
 
 %-debug.o: $(SRC)/%.c
 	$(CC) -c $(DBG) $(CFLAGS) $< -o $(SRC)/$@
