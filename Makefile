@@ -1,29 +1,35 @@
-CC=gcc
-CFLAGS= -Werror -Wall
-RELEASE= -s -Os
-LFLAGS=
-DBG= -g3 -fsanitize=address
-ASAN_LIBS = -lasan
+
+## Path variables
 DIR := ${CURDIR}
 INCLUDE= $(DIR)/include
 BIN = $(DIR)/binaries
 SRC = $(DIR)/src
 
+#Build variables
+CC=gcc
+CFLAGS= -Werror -Wall -I$(INCLUDE)
+RELEASE= -s -Os
+LFLAGS=
+DBG= -g3 -fsanitize=address
+ASAN_LIBS = -lasan
+DEPS= $(addprefix $(INCLUDE)/,e32.h)
+OBJS=$(addprefix $(SRC)/,eray.o e32.o)
+
 .PHONY: clean
 
 all: clean eray-release eray-debug
 
-eray-release: eray.o
-	$(CC) $(SRC)/$^ $(LFLAGS) -o $(BIN)/$@ $(CFLAGS) $(RELEASE)
+eray-release: $(OBJS)
+	$(CC) $(CFLAGS) $(RELEASE) $^ $(LFLAGS) -o $(BIN)/$@
 
-eray-debug: eray-debug.o
-	$(CC) $(SRC)/$^ $(LFLAGS) $(ASAN_LIBS) -o $(BIN)/$@ $(CFLAGS)
+eray-debug: $(OBJS)
+	$(CC) $(CFLAGS) $(DBG) $^ $(LFLAGS) $(ASAN_LIBS) -o $(BIN)/$@
 
-%.o: $(SRC)/%.c
-	$(CC) -c $(CFLAGS) $(RELEASE) $< -o $(SRC)/$@
+%.o: %.c $(DEPS)
+	$(CC) -c $(CFLAGS) $(RELEASE) $< -o $@
 
-%-debug.o: $(SRC)/%.c
-	$(CC) -c $(DBG) $(CFLAGS) $< -o $(SRC)/$@
+%-debug.o: %.c $(DEPS)
+	$(CC) -c $(DBG) $(CFLAGS) $< -o $@
 
 clean:
 	rm -fr $(DIR)/binaries/* $(SRC)/*.o
