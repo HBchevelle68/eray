@@ -1,10 +1,14 @@
 #include "e32.h"
 
 
+int parseElf32(uint32_t *fd){
+
+  return 0;
+}
+
 
 int get_Elf32_hdr(uint32_t *fd, Elf32_Ehdr *e32_h)
 {
-
 	if(e32_h == NULL){
 		printf("ERROR Elf32_Ehdr is NULL\n");
 		return -1;
