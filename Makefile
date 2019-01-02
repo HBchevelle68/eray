@@ -12,9 +12,9 @@ RELEASE= -s -Os
 LFLAGS=
 DBG= -g3 -fsanitize=address
 ASAN_LIBS = -lasan
-DEPS= $(addprefix $(INCLUDE)/, e32.h e64.h )
-ROBJS=$(addprefix $(SRC)/, eray.o e32.o e64.o)
-DOBJS=$(addprefix $(SRC)/, eray-debug.o e32-debug.o e64-debug.o)
+DEPS= $(addprefix $(INCLUDE)/, e32.h e64.h shared.h )
+ROBJS=$(addprefix $(SRC)/, eray.o e32.o e64.o shared.o)
+DOBJS=$(addprefix $(SRC)/, eray-debug.o e32-debug.o e64-debug.o shared.o)
 
 .PHONY: clean
 
@@ -23,7 +23,7 @@ all: clean eray-release eray-debug
 eray-release: $(ROBJS)
 	$(CC) $(CFLAGS) $(RELEASE) $^ $(LFLAGS) -o $(BIN)/$@
 
-eray-debug: $(DOBJS) 
+eray-debug: $(DOBJS)
 	$(CC) $(CFLAGS) $(DBG) $^ $(LFLAGS) $(ASAN_LIBS) -o $(BIN)/$@
 
 %.o: %.c $(DEPS)

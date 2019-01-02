@@ -14,17 +14,18 @@
 #include <assert.h>
 
 #include "e32.h"
+#include "e64.h"
 
 static
-int verify_elf(uint32_t *fd, Elf32_Ehdr *e32_h){
+int verify_elf(uint32_t *fd, Elf64_Ehdr *e64_h){
 
-	if(read(*fd, (void*)e32_h, sizeof(Elf32_Ehdr)) != sizeof(Elf32_Ehdr)){
+	if(read(*fd, (void*)e64_h, sizeof(Elf64_Ehdr)) != sizeof(Elf64_Ehdr)){
 		printf("[-] ERROR reading file - Elf32 header %s\n", strerror(errno));
 		return -1;
 	}
 
-	if(!strncmp((char*)e32_h->e_ident, ELFMAG, 4)) {
-		return e32_h->e_ident[EI_CLASS];
+	if(!strncmp((char*)e64_h->e_ident, ELFMAG, 4)) {
+		return e64_h->e_ident[EI_CLASS];
 	}
 	return -1;
 }
@@ -32,7 +33,7 @@ int verify_elf(uint32_t *fd, Elf32_Ehdr *e32_h){
 int main(int argc, char** argv){
 	uint8_t ret = 0;
 	uint32_t fd = 0;
-	Elf32_Ehdr elf32_h = {0}; //temp for verify elf
+	Elf64_Ehdr elf64_h = {0}; //temp for verify elf
 
 	if(argc < 2){
 		printf("Usage: ./parseElf <file>\n");
@@ -44,17 +45,20 @@ int main(int argc, char** argv){
 		printf("[-] ERROR open %s\n", strerror(errno));
 	}
 
-	ret = verify_elf(&fd, &elf32_h);
+	ret = verify_elf(&fd, &elf64_h);
 	if(!ret){
 		printf("Not Valid Elf -> Elf Magic missing\n");
 		return -1;
 	}
-	else if(ret == 1){
-		parseElf32(&fd);
-	}
 	else if(ret == 2){
-		//parseElf64
+		printf("ELF 64-bit\n");
+		parseElf64(fd);
 	}
+	else if(ret == 1){
+		printf("ELF 32-bit\n");
+		parseElf32(fd);
+	}
+
 
 
 	close(fd);
