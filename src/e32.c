@@ -4,12 +4,18 @@
 #include <string.h>
 #include <sys/types.h> //uint*_t types
 #include <unistd.h>
-#include <stdlib.h>
+#include <stdlib.h> //malloc
 
 #include "shared.h"
 #include "e32.h"
 
 static Elf32_Ehdr *e32_hdr;
+
+void errorexit(){
+	if(e32_hdr){
+		free(e32_hdr);
+	}
+}
 
 static
 int get_Elf32_hdr(uint32_t *fd, Elf32_Ehdr *e32h)
@@ -36,19 +42,29 @@ int parseElf32(uint32_t fd){
   e32_hdr = malloc(sizeof(Elf32_Ehdr));
   if(e32_hdr == NULL){
     printf("Heap allocation error: %d\n", errno);
+		errorexit();
     return -1;
   }
 
   ret = get_Elf32_hdr(&fd, e32_hdr);
   if(ret != 0){
     printf("Error getting 32-bit Elf Header\n");
+		errorexit();
     return -1;
   }
 
   ret = get_osabi(e32_hdr->e_ident[EI_OSABI]);
   if(ret != 0){
-    printf("Error gettingElf OSABI\n");
+    printf("Error getting Elf OSABI\n");
+		errorexit();
     return -1;
+  }
+
+	ret = get_etype(e32_hdr->e_type);
+  if(ret != 0){
+    printf("Error getting Elf e_type\n");
+		errorexit();
+		return -1;
   }
 
   free(e32_hdr);

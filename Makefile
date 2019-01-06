@@ -8,7 +8,7 @@ SRC = $(DIR)/src
 #Build variables
 CC=gcc
 CFLAGS= -Werror -Wall -I$(INCLUDE)
-RELEASE= -s -Os
+RELEASE= -s -O2
 LFLAGS=
 DBG= -g3 -fsanitize=address
 ASAN_LIBS = -lasan

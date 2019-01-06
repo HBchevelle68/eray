@@ -12,6 +12,13 @@
 static Elf64_Ehdr *e64_hdr;
 
 static
+void errorexit(){
+	if(e64_hdr){
+		free(e64_hdr);
+	}
+}
+
+static
 int get_Elf64_hdr(uint32_t *fd, Elf64_Ehdr *e64h)
 {
 	if(e64h == NULL){
@@ -35,19 +42,29 @@ int parseElf64(uint32_t fd){
   e64_hdr = malloc(sizeof(Elf64_Ehdr));
   if(e64_hdr == NULL){
     printf("Heap allocation error: %d\n", errno);
-    return -1;
+    errorexit();
+		return -1;
   }
 
   ret = get_Elf64_hdr(&fd, e64_hdr);
   if(ret != 0){
     printf("Error getting 32-bit Elf Header\n");
-    return -1;
+    errorexit();
+		return -1;
   }
 
   ret = get_osabi(e64_hdr->e_ident[EI_OSABI]);
   if(ret != 0){
-    printf("Error gettingElf OSABI\n");
-    return -1;
+    printf("Error getting Elf OSABI\n");
+    errorexit();
+		return -1;
+  }
+
+	ret = get_etype(e64_hdr->e_type);
+  if(ret != 0){
+    printf("Error getting Elf e_type\n");
+    errorexit();
+		return -1;
   }
 
   free(e64_hdr);

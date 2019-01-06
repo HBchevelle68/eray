@@ -51,7 +51,48 @@ int get_osabi(uint8_t elf_osabi){
       printf("Standalone (embedded) application\n");
       break;
     default:
-      printf("Error getting OSABI -> No match found for value %d\n", elf_osabi);
+      printf("No match found for value %d\n", elf_osabi);
+      return -1;
+  }
+  return 0;
+}
+
+int get_etype(uint16_t elf_etype){
+
+  printf("e-type: ");
+  switch(elf_etype) {
+    case ET_NONE:		/* No file type */
+      printf("No file type\n");
+      break;
+    case ET_REL:		/* Relocatable file */
+      printf("Relocatable file\n");
+      break;
+    case ET_EXEC:		/* Executable file */
+      printf("Executable file\n");
+      break;
+    case ET_DYN:		/* Shared object file */
+      printf("Shared object file\n");
+      break;
+    case ET_CORE:		/* Core file */
+      printf("Core file\n");
+      break;
+    case	ET_NUM:		/* Number of defined types */
+      printf("Number of defined types\n");
+      break;
+    case ET_LOOS:		/* OS-specific range start */
+      printf("OS-specific range start\n");
+      break;
+    case ET_HIOS:		/* OS-specific range end */
+      printf("OS-specific range end\n");
+      break;
+    case ET_LOPROC:	/* Processor-specific range start */
+      printf("Processor-specific range start\n");
+      break;
+    case ET_HIPROC:	/* Processor-specific range end */
+      printf("Processor-specific range end\n");
+      break;
+    default:
+      printf("No match found for value %d\n", elf_etype);
       return -1;
   }
   return 0;
