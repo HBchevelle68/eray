@@ -1,8 +1,7 @@
-#include <stdio.h>  //basic i/o
-#include <elf.h> //elf header types and structs
+#include <stdio.h> //basic i/o
+#include <elf.h>   //elf header types and structs
 #include <errno.h> //error printing
 #include <string.h>
-#include <sys/types.h> //uint*_t types
 #include <unistd.h>
 #include <stdlib.h> //malloc
 
@@ -11,6 +10,7 @@
 
 static Elf32_Ehdr *e32_hdr;
 
+static
 void errorexit(){
 	if(e32_hdr){
 		free(e32_hdr);
